@@ -1,0 +1,18 @@
+# Example crontab for the postgres OS user  (crontab -e as postgres)
+# Adjust paths to where you cloned this repository.
+SCRIPTS=/var/lib/pgsql/postgresql-dba-scripts/scripts
+
+# Daily logical backup at 01:30
+30 1 * * *   $SCRIPTS/pg_backup.sh logical  >/dev/null 2>&1
+
+# Weekly physical base backup (for PITR) on Sunday at 02:30
+30 2 * * 0   $SCRIPTS/pg_backup.sh physical >/dev/null 2>&1
+
+# Health check every morning at 07:00
+0 7 * * *    $SCRIPTS/pg_health_check.sh    >/dev/null 2>&1
+
+# Replication lag check every 5 minutes
+*/5 * * * *  $SCRIPTS/replication_monitor.sh >/dev/null 2>&1
+
+# Targeted VACUUM ANALYZE nightly at 03:30
+30 3 * * *   $SCRIPTS/vacuum_analyze.sh     >/dev/null 2>&1
