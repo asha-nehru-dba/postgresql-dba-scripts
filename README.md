@@ -10,18 +10,18 @@ Tested on PostgreSQL 12 and 13 (RHEL 7.x).
 
 | Script | What it does |
 |---|---|
-| [`pg_backup.sh`](scripts/pg_backup.sh) | Logical backups (`pg_dump -Fc` per database + `pg_dumpall --globals-only`) or physical backups (`pg_basebackup` with streamed WAL for PITR). Verifies each dump and deletes backups past the retention period. |
-| [`pg_health_check.sh`](scripts/pg_health_check.sh) | Daily report: availability, role (primary/standby), connection usage, database sizes, long-running and blocked queries, idle-in-transaction sessions, XID wraparound risk, dead tuples, cache hit ratio and disk usage. |
-| [`replication_monitor.sh`](scripts/replication_monitor.sh) | Detects whether the node is primary or standby. On the primary it reports each standby's state and byte lag plus replication slots; on a standby it checks the WAL receiver and replay delay. Warn/critical thresholds and exit codes for alerting. |
-| [`vacuum_analyze.sh`](scripts/vacuum_analyze.sh) | Runs `VACUUM (ANALYZE)` only on tables above a dead-tuple threshold and lists large unused indexes as REINDEX/DROP candidates. |
-| [`cron/crontab.example`](cron/crontab.example) | Sample schedule for all of the above. |
+| [`pg_backup.sh`](pg_backup.sh) | Logical backups (`pg_dump -Fc` per database + `pg_dumpall --globals-only`) or physical backups (`pg_basebackup` with streamed WAL for PITR). Verifies each dump and deletes backups past the retention period. |
+| [`pg_health_check.sh`](pg_health_check.sh) | Daily report: availability, role (primary/standby), connection usage, database sizes, long-running and blocked queries, idle-in-transaction sessions, XID wraparound risk, dead tuples, cache hit ratio and disk usage. |
+| [`replication_monitor.sh`](replication_monitor.sh) | Detects whether the node is primary or standby. On the primary it reports each standby's state and byte lag plus replication slots; on a standby it checks the WAL receiver and replay delay. Warn/critical thresholds and exit codes for alerting. |
+| [`vacuum_analyze.sh`](vacuum_analyze.sh) | Runs `VACUUM (ANALYZE)` only on tables above a dead-tuple threshold and lists large unused indexes as REINDEX/DROP candidates. |
+| [`cron/crontab.example`](crontab.example) | Sample schedule for all of the above. |
 
 ## Setup
 
 ```bash
-git clone https://github.com/<your-username>/postgresql-dba-scripts.git
+git clone https://github.com/asha-nehru-dba/postgresql-dba-scripts.git
 cd postgresql-dba-scripts
-chmod +x scripts/*.sh
+chmod +x *.sh
 ```
 
 Connection settings come from the standard libpq environment variables, so the
@@ -35,11 +35,11 @@ export BACKUP_ROOT=/var/lib/pgsql/backups RETENTION_DAYS=7
 ## Usage
 
 ```bash
-./scripts/pg_backup.sh logical        # nightly dumps
-./scripts/pg_backup.sh physical       # base backup for PITR
-./scripts/pg_health_check.sh          # writes /var/log/pg_health_YYYYMMDD.log
-./scripts/replication_monitor.sh      # exit 0 OK, 1 warning, 2 critical
-./scripts/vacuum_analyze.sh mydb      # maintenance on one database
+./pg_backup.sh logical        # nightly dumps
+./pg_backup.sh physical       # base backup for PITR
+./pg_health_check.sh          # writes /var/log/pg_health_YYYYMMDD.log
+./replication_monitor.sh      # exit 0 OK, 1 warning, 2 critical
+./vacuum_analyze.sh mydb      # maintenance on one database
 ```
 
 Then install the schedule as the `postgres` user:
